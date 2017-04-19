@@ -1,4 +1,4 @@
-#本示例用于测试time.Ticker的个数和时间间隔对程序CPU占用率的影响
+# 本示例用于测试time.Ticker的个数和时间间隔对程序CPU占用率的影响
 
 ## 原理
 runtime.timeproc需要在所有Ticker（及其它Timer）所设置的最小超时值的时刻被唤醒，然后向Ticker中channel写入值。这个写操作进而会唤醒当前正等在channel进行读操作的goroutine，来执行程序自己的定时触发逻辑。以一次触发为例，会导致如下事件：
@@ -9,21 +9,16 @@ runtime.timeproc需要在所有Ticker（及其它Timer）所设置的最小超�
 若用户goroutine中的定时触发逻辑非常简单，则CPU资源会主要消耗在goroutine调度和channel读写上。若Ticker的时间间隔设置的非常小，导致这样的情况要频繁发生，则整个进程会持续的发生大量的goroutine上下文切换。
 
 ## 测试结果
-  PID USER      PRI  NI  VIRT   RES S CPU% MEM%   TIME+  Command
- 6226 zhuyie     24   0  530G  4956 ?  ==7.4==  0.0  0:17.00 ==./ticker -num_goroutines 1 -duration 1==
-
-  PID USER      PRI  NI  VIRT   RES S CPU% MEM%   TIME+  Command
- 6461 zhuyie     24   0  530G  5336 ? ==33.4==  0.0  0:15.16 ==./ticker -num_goroutines 32 -duration 1==
-
-  PID USER      PRI  NI  VIRT   RES S CPU% MEM%   TIME+  Command
- 6521 zhuyie     24   0  530G  5520 ? ==68.2==  0.0  0:19.27 ==./ticker -num_goroutines 64 -duration 1==
-
-  PID USER      PRI  NI  VIRT   RES S CPU% MEM%   TIME+  Command
- 6566 zhuyie     24   0  530G  5532 ?  ==4.8==  0.0  0:02.19 ==./ticker -num_goroutines 64 -duration 20==
+` PID USER      PRI  NI  VIRT   RES S CPU% MEM%   TIME+  Command
+ 6226 zhuyie     24   0  530G  4956 ?  7.4  0.0  0:17.00 ./ticker -num_goroutines 1 -duration 1
+ 6461 zhuyie     24   0  530G  5336 ? 33.4  0.0  0:15.16 ./ticker -num_goroutines 32 -duration 1
+ 6521 zhuyie     24   0  530G  5520 ? 68.2  0.0  0:19.27 ./ticker -num_goroutines 64 -duration 1
+ 6566 zhuyie     24   0  530G  5532 ?  4.8  0.0  0:02.19 ./ticker -num_goroutines 64 -duration 20
+`
 
 ## pprof分析
 在64/1的配置中，pprof的top情况如下：
-~ go tool pprof http://127.0.0.1:12345/debug/pprof/profile
+`~ go tool pprof http://127.0.0.1:12345/debug/pprof/profile
 Fetching profile from http://127.0.0.1:12345/debug/pprof/profile
 Please wait... (30s)
 Saved profile in /Users/zhuyie/pprof/pprof.127.0.0.1:12345.samples.cpu.005.pb.gz
@@ -43,9 +38,10 @@ Showing top 10 nodes out of 47 (cum >= 1.30s)
      0.01s 0.058% 98.89%      5.31s 31.02%  runtime.timerproc
          0     0% 98.89%      2.28s 13.32%  main.testFunc
          0     0% 98.89%      1.30s  7.59%  runtime.chansend
+`
 
 在64/20的配置中，pprof的top情况如下：
-~ go tool pprof http://127.0.0.1:12345/debug/pprof/profile
+`~ go tool pprof http://127.0.0.1:12345/debug/pprof/profile
 Fetching profile from http://127.0.0.1:12345/debug/pprof/profile
 Please wait... (30s)
 Saved profile in /Users/zhuyie/pprof/pprof.127.0.0.1:12345.samples.cpu.006.pb.gz
@@ -64,3 +60,5 @@ Showing top 10 nodes out of 58 (cum >= 20ms)
       40ms  2.86% 95.00%      100ms  7.14%  runtime.unlock
       20ms  1.43% 96.43%       20ms  1.43%  runtime.procyield
       10ms  0.71% 97.14%       20ms  1.43%  runtime.gopark
+`
+

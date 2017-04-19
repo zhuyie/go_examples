@@ -6,6 +6,7 @@ runtime.timeproc需要在所有Ticker（及其它Timer）所设置的最小超�
 * runtime.timeproc执行完毕被yield走
 * 用户goroutine被调度执行
 * 用户goroutine执行完毕被yield走
+
 若用户goroutine中的定时触发逻辑非常简单，则CPU资源会主要消耗在goroutine调度和channel读写上。所以当Ticker的时间间隔设置的非常小，导致这样的情况要频繁发生时，则整个进程会持续的发生大量的goroutine上下文切换。
 
 ## 测试结果

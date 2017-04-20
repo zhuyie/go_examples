@@ -1,9 +1,9 @@
-# 本示例用于测试time.Ticker的个数和时间间隔对程序CPU占用率的影响
+# 测试time.Ticker的个数和时间间隔对程序CPU占用率的影响
 
 ## 原理
-runtime.timeproc需要在所有Ticker（及其它Timer）所设置的最小超时值的时刻被唤醒，然后向Ticker中的channel写入值。这个写操作进而会唤醒当前正等待对channel进行读操作的goroutine，来执行程序自己的定时触发逻辑。以一次触发为例，会导致如下事件发生：
-* runtime.timeproc被调度执行
-* runtime.timeproc执行完毕被yield走
+runtime.timerproc需要在所有Ticker（及其它Timer）所设置的最小超时值的时刻被唤醒，然后向Ticker中的channel写入值。这个写操作进而会唤醒当前正等待对channel进行读操作的goroutine，来执行程序自己的定时触发逻辑。以一次触发为例，会导致如下事件发生：
+* runtime.timerproc被调度执行
+* runtime.timerproc执行完毕被yield走
 * 用户goroutine被调度执行
 * 用户goroutine执行完毕被yield走
 

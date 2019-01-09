@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"plugin"
-	"plugin_globalvar/logic"
+	"plugin_test/logic"
 	"unsafe"
 )
 
@@ -23,8 +23,11 @@ func main() {
 	fmt.Println("---------------------------------------------")
 
 	logic.GetFuncAddr()
+
 	testFunc2, _ := p.Lookup("TestFunc2")
 	testFunc2.(func())()
+
+	fmt.Println("---------------------------------------------")
 
 	return
 }

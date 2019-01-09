@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"plugin_globalvar/logic"
+	"plugin_test/logic"
 	"unsafe"
 )
 

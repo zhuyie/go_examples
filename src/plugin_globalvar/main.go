@@ -20,5 +20,11 @@ func main() {
 	testFunc, _ := p.Lookup("TestFunc")
 	testFunc.(func())()
 
+	fmt.Println("---------------------------------------------")
+
+	logic.GetFuncAddr()
+	testFunc2, _ := p.Lookup("TestFunc2")
+	testFunc2.(func())()
+
 	return
 }
